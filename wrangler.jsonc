@@ -1,0 +1,37 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sambungkatagx-api",
+	"main": "src/index.js",
+	"compatibility_date": "2026-07-18",
+	"observability": {
+		"enabled": true
+	},
+	"upload_source_maps": true,
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "sambungkata_db",
+			"database_id": "0eb5ddeb-87f6-4982-93a0-82bb10fe21bf"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "RATE_LIMIT",
+			"id": "26fd798b97e6423a85447208373b8bb2"
+		},
+		{
+			"binding": "DICTIONARY_KV",
+			"id": "e7e7c6ac65ed4f118cda5a448da7c6af"
+		}
+	],
+	"vars": {
+		"OWNER_USERNAME": "gxjpeg2",
+		"MULTI_DEVICE_EXEMPT_USERNAME": "lalalavienroselalala",
+		"REPORTED_WORDS_ACCESS": "lalalavienroselalala",
+		"PIN_RESET_ACCESS": "lalalavienroselalala,lilylovely165",
+		"UNLIMITED_KOMPE_PRESET_USERNAMES": "awriel"
+	}
+}
