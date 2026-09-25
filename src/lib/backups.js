@@ -11,7 +11,18 @@
 export const BACKUP_THROTTLE_SECONDS = 30 * 60; // 30 menit
 export const BACKUP_RETENTION_COUNT = 20;
 
+// Setelah tabel dipastikan ada sekali di isolate ini, gak perlu diulang tiap
+// request -- CREATE TABLE/INDEX IF NOT EXISTS tetep query yang perlu round-
+// trip ke D1, dan ini kepanggil di JALUR UTAMA tiap /sync (lewat
+// maybeSnapshotBeforeWrite), jadi paling kerasa dampaknya kalau dihilangin.
+// Cloudflare Workers biasa reuse isolate yang sama buat banyak request
+// berurutan, jadi flag ini efektif ngilangin 2 query DDL di hampir semua
+// sync setelah yang pertama. Isolate baru (cold start) bakal balik ke false
+// lagi dan re-check sekali -- itu udah bener & aman.
+let backupsTableEnsured = false;
+
 export async function ensureBackupsTable(env) {
+  if (backupsTableEnsured) return;
   await env.DB.prepare(
     `CREATE TABLE IF NOT EXISTS backups (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,6 +35,7 @@ export async function ensureBackupsTable(env) {
     `CREATE INDEX IF NOT EXISTS idx_backups_username_created
      ON backups (username, created_at DESC)`
   ).run();
+  backupsTableEnsured = true;
 }
 
 // Dipanggil dari handleSyncPost, SEBELUM data lama ditimpa. dataJsonString
